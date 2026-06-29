@@ -1,0 +1,37 @@
+{
+  "name": "@se-2/foundry",
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "account": "make account",
+    "account:generate": "node scripts-js/generateKeystore.js",
+    "account:import": "node scripts-js/importAccount.js",
+    "account:reveal-pk": "node scripts-js/revealPK.js",
+    "chain": "make setup-anvil-wallet && anvil --block-time 1",
+    "clean": "forge clean",
+    "compile": "make compile",
+    "deploy": "node scripts-js/parseArgs.js",
+    "flatten": "make flatten",
+    "fork": "make fork FORK_URL=${1:-mainnet}",
+    "format": "make format",
+    "postinstall": "shx cp -n .env.example .env",
+    "lint": "make lint",
+    "simulate:optimistic": "node scripts-js/simulate/runOptimisticBots.js",
+    "simulate:staking": "node scripts-js/simulate/runStakingOracleBots.js",
+    "simulate:whitelist": "node scripts-js/simulate/runWhitelistOracleBots.js",
+    "test": "forge test",
+    "verify": "make verify RPC_URL=${1:-localhost}"
+  },
+  "dependencies": {
+    "dotenv": "~16.3.1",
+    "envfile": "~6.18.0",
+    "ethers": "~5.7.1",
+    "prettier": "~2.8.8",
+    "qrcode": "~1.5.3",
+    "toml": "~3.0.0",
+    "viem": "~2.21.54"
+  },
+  "devDependencies": {
+    "shx": "^0.3.4"
+  }
+}
