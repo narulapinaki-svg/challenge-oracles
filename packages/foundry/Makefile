@@ -13,7 +13,7 @@ fork: setup-anvil-wallet
 # Deploy the contracts
 deploy:
 	@if [ ! -f "$(DEPLOY_SCRIPT)" ]; then 		echo "Error: Deploy script '$(DEPLOY_SCRIPT)' not found"; 		exit 1; 	fi
-	@if [ "$(RPC_URL)" = "localhost" ]; then 		if [ "$(ETH_KEYSTORE_ACCOUNT)" = "scaffold-eth-default" ]; then 			yes | forge script $(DEPLOY_SCRIPT) --rpc-url localhost --password localhost --broadcast --ffi --non-interactive --slow; 		else 			yes | forge script $(DEPLOY_SCRIPT) --rpc-url localhost --broadcast --ffi --non-interactive --slow; 		fi 	else 		yes | forge script $(DEPLOY_SCRIPT) --rpc-url $(RPC_URL) --broadcast --ffi --non-interactive --slow; 	fi
+	@if [ "$(RPC_URL)" = "localhost" ]; then 		if [ "$(ETH_KEYSTORE_ACCOUNT)" = "scaffold-eth-default" ]; then 			yes | forge script $(DEPLOY_SCRIPT) --rpc-url localhost --password localhost --broadcast --ffi --non-interactive --with-gas-price 2000000000; 		else 			yes | forge script $(DEPLOY_SCRIPT) --rpc-url localhost --broadcast --ffi --non-interactive --with-gas-price 2000000000; 		fi 	else 		yes | forge script $(DEPLOY_SCRIPT) --rpc-url $(RPC_URL) --broadcast --ffi --non-interactive; 	fi
 # Deploy and generate ABIs
 deploy-and-generate-abis: deploy generate-abis 
 # Generate TypeScript ABIs
