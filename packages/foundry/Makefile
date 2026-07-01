@@ -10,10 +10,29 @@ chain: setup-anvil-wallet
 # Start a fork
 fork: setup-anvil-wallet
 	anvil --fork-url ${FORK_URL} --chain-id 31337
-# Deploy the contracts
+# Deploy the contracts (split into 3 separate runs to avoid nonce race conditions)
 deploy:
-	@if [ ! -f "$(DEPLOY_SCRIPT)" ]; then 		echo "Error: Deploy script '$(DEPLOY_SCRIPT)' not found"; 		exit 1; 	fi
-	@if [ "$(RPC_URL)" = "localhost" ]; then 		if [ "$(ETH_KEYSTORE_ACCOUNT)" = "scaffold-eth-default" ]; then 			yes | forge script $(DEPLOY_SCRIPT) --rpc-url localhost --password localhost --broadcast --ffi --non-interactive --slow --with-gas-price 2000000000; 		else 			yes | forge script $(DEPLOY_SCRIPT) --rpc-url localhost --broadcast --ffi --non-interactive --slow --with-gas-price 2000000000; 		fi 	else 		yes | forge script $(DEPLOY_SCRIPT) --rpc-url $(RPC_URL) --broadcast --ffi --non-interactive --slow --with-gas-price 2000000000; 	fi
+	@if [ "$(RPC_URL)" = "localhost" ]; then \
+		if [ "$(ETH_KEYSTORE_ACCOUNT)" = "scaffold-eth-default" ]; then \
+			yes | forge script script/DeployWhitelist.s.sol:DeployWhitelist --rpc-url localhost --password localhost --broadcast --ffi --non-interactive; \
+			sleep 2; \
+			yes | forge script script/DeployStaking.s.sol:DeployStaking --rpc-url localhost --password localhost --broadcast --ffi --non-interactive; \
+			sleep 2; \
+			yes | forge script script/DeployOptimistic.s.sol:DeployOptimistic --rpc-url localhost --password localhost --broadcast --ffi --non-interactive; \
+		else \
+			yes | forge script script/DeployWhitelist.s.sol:DeployWhitelist --rpc-url localhost --broadcast --ffi --non-interactive; \
+			sleep 2; \
+			yes | forge script script/DeployStaking.s.sol:DeployStaking --rpc-url localhost --broadcast --ffi --non-interactive; \
+			sleep 2; \
+			yes | forge script script/DeployOptimistic.s.sol:DeployOptimistic --rpc-url localhost --broadcast --ffi --non-interactive; \
+		fi \
+	else \
+		yes | forge script script/DeployWhitelist.s.sol:DeployWhitelist --rpc-url $(RPC_URL) --broadcast --ffi --non-interactive; \
+		sleep 2; \
+		yes | forge script script/DeployStaking.s.sol:DeployStaking --rpc-url $(RPC_URL) --broadcast --ffi --non-interactive; \
+		sleep 2; \
+		yes | forge script script/DeployOptimistic.s.sol:DeployOptimistic --rpc-url $(RPC_URL) --broadcast --ffi --non-interactive; \
+	fi
 # Deploy and generate ABIs
 deploy-and-generate-abis: deploy generate-abis 
 # Generate TypeScript ABIs
