@@ -31,20 +31,17 @@ jobs:
         with:
           version: nightly
 
-      - name: Create deployer wallet
-        run: |
-          cast wallet import scaffold-eth-default \
-            --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80 \
-            --unsafe-password "localhost"
-        working-directory: packages/foundry
-
       - name: Run foundry node, deploy contracts (& generate contracts typescript output)
         env:
           ETHERSCAN_API_KEY: ${{ secrets.ETHERSCAN_API_KEY }}
         run: |
           yarn chain &
           sleep 5
+          cast wallet import scaffold-eth-default \
+            --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80 \
+            --unsafe-password "localhost"
           yarn deploy
+        working-directory: packages/foundry
       - name: Run nextjs lint
         run: yarn next:lint --max-warnings=0
       - name: Check typings on nextjs
